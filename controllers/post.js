@@ -65,6 +65,7 @@ exports.getMostLikesPosts = async (req, res) => {
 exports.getLatestPosts = async (req, res) => {
   try {
     const latestPosts = await models.Post.findAll({ order: [ [ "createdAt", "DESC" ] ]})
+      return res.status(200).json(latestPosts)
   } catch (error) {
       return res.status(500).json({ error: error.message })
   }
