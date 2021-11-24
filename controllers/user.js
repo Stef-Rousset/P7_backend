@@ -53,6 +53,11 @@ exports.getProfile = async (req, res) => {
 }
 exports.updateProfile = async (req, res) => {
   const userObject = req.body.user
+  //si maj du password, il faut hacher le nouveau password
+  if (userObject.password){
+          const hash = await bcrypt.hash(userObject.password, 10) //hashage du password
+          userObject.password = hash
+  }
   const user = await models.User.findOne({ where: { id : req.params.id } })
   const oldImgFileName = user.imageUrl.split('/images/')[1]
 
@@ -86,8 +91,9 @@ exports.updateProfile = async (req, res) => {
 exports.deleteProfile = async (req, res) => {
     const user = await models.User.findOne({ where: { id : req.params.id } })
     const { firstName, lastName } = user
+    const oldImgFileName = user.imageUrl.split('/images/')[1]
     try {
-        if (user.imageUrl){
+        if (user.imageUrl && oldImgFileName !== 'defaultAvatar.jpg'){
             const filename = user.imageUrl.split('/images')[1]
             fs.unlink(`images/${filename}`, async () => {
                 await user.destroy()
