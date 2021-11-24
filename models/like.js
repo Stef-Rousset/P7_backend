@@ -3,32 +3,29 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Post extends Model {
+  class Like extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({ User, Like, Comment }) {
+    static associate({ User, Post }) {
       // define association here
       this.belongsTo(User, { foreignKey: 'userId' })
-      this.hasMany(Like, { foreignKey: 'postId', onDelete: 'CASCADE' })
-      this.hasMany(Comment, { foreignKey: 'postId', onDelete: 'CASCADE' })
+      this.belongsTo(Post, { foreignKey: 'postId' })
     }
   };
-  Post.init({
-    title: {
-      type: DataTypes.STRING,
+  Like.init({
+    status: {
+      type: DataTypes.ENUM,
+      values: ['like', 'dislike', 'none'],
       allowNull: false,
-    },
-    content: {
-      type: DataTypes.TEXT,
-      allowNull: false,
+      defaultValue: 'none',
     }
     }, {
     sequelize,
-    tableName: 'posts',
-    modelName: 'Post',
+    tableName: 'likes',
+    modelName: 'Like',
   });
-  return Post;
+  return Like;
 };
