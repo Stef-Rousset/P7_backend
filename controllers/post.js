@@ -1,7 +1,6 @@
 const models = require('../models');
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
-require('dotenv').config();
 
 
 function getUserIdFromToken(token) {
@@ -9,6 +8,7 @@ function getUserIdFromToken(token) {
     const userId = decodedToken.userId   // recup de l'id
     return userId
 }
+//POSTS
 exports.getAllPosts = async(req, res) => {
   try {
       const posts = await models.Post.findAll()
@@ -73,6 +73,7 @@ exports.getLatestPosts = async (req, res) => {
       return res.status(500).json({ error: error.message })
   }
 }
+//LIKES
 exports.likePost = async(req, res) => {
   try{
       const post = await models.Post.findOne({ where: { id: req.params.id} })
@@ -114,6 +115,7 @@ exports.getTotalDislikes = async(req,res) => {
         return res.status(500).json({ error: error.message})
   }
 }
+//COMMENTS
 exports.createComment = async(req, res) => {
   try {
       const post = await models.Post.findOne({ where: { id: req.params.id}})
@@ -142,3 +144,4 @@ exports.deleteComment = async(req, res) => {
       return res.status(500).json({ error: error.message})
   }
 }
+
