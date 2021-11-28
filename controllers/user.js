@@ -3,19 +3,33 @@ const jwt = require('jsonwebtoken');
 const models = require('../models');
 require('dotenv').config();
 const fs = require('fs');
+const passwordValidator = require('password-validator');
+
+var schema = new passwordValidator();
+schema
+.is().min(6)        // min 6 caractères
+.is().max(30)       // max 30 caractères
+.has().uppercase(1)  // au moins 1 maj
+.has().lowercase(1)  // au moins 1 min
+.has().digits(1)     // au moins 1 chiffre
+.has().not().spaces() // pas d'espace
 
 exports.signup = async(req, res) => {
     try {
-        const hash = await bcrypt.hash(req.body.password, 10) //hashage du password
-        const user = await models.User.create({         //crée et save ds db
-                                          firstName: req.body.firstName,
-                                          lastName: req.body.lastName,
-                                          email: req.body.email,
-                                          password: hash,
-                                          imageUrl: `${req.protocol}://${req.get('host')}/images/defaultAvatar.jpg`
-                                        })
-        const token = "Bearer " + jwt.sign( { userId: user.id }, process.env.TOKENSECRET, { expiresIn: '24h' } )
-        return res.status(201).json({user: user, token: token, message: `${user.firstName} ${user.lastName} created` })
+        if (schema.validate(req.body.password) === true){
+            const hash = await bcrypt.hash(req.body.password, 10) //hashage du password
+            const user = await models.User.create({         //crée et save ds db
+                                              firstName: req.body.firstName,
+                                              lastName: req.body.lastName,
+                                              email: req.body.email,
+                                              password: hash,
+                                              imageUrl: `${req.protocol}://${req.get('host')}/images/defaultAvatar.jpg`
+                                            })
+            const token = "Bearer " + jwt.sign( { userId: user.id }, process.env.TOKENSECRET, { expiresIn: '24h' } )
+            return res.status(201).json({user: user, token: token, message: `${user.firstName} ${user.lastName} created` })
+        } else {
+            res.status(400).json({ error: 'Invalid password'});
+        }
     } catch(error){
         return res.status(500).json({ error: error.message });
     }
