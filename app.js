@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const userRoutes = require('./routes/user');
 const postRoutes = require('./routes/post');
+const postSignalmentRoutes = require('./routes/post_signalments');
+const commentSignalmentRoutes = require('./routes/comment_signalments');
 const path = require('path');
 
 
@@ -19,5 +21,7 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 // routes
 app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
+app.use('/api/', postSignalmentRoutes);
+app.use('/api/', commentSignalmentRoutes);
 
 module.exports = app;
