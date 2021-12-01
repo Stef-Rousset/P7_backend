@@ -38,3 +38,18 @@ exports.getAllCommentSignalments = async(req,res) => {
       return res.status(500).json({error: error.message})
   }
 }
+exports.deleteCommentSignalment = async(req,res) => {
+  try{
+      const commentSignalment = await models.CommentSignalment.findOne({ where: { id: req.params.id }})
+      const userId = await getUserIdFromToken(req.headers.authorization.split(' ')[1])
+      const currentUser = await models.User.findOne({ where: { id: userId}})
+      if (currentUser.role === 'admin'){
+          commentSignalment.destroy()
+          return res.status(200).json({ message: "Comment signalment deleted"})
+      } else {
+          return res.status(401).json({ message: "You are not allowed to perform this action" })
+      }
+  } catch(error){
+      return resr.status(500).json({ error: error.message})
+  }
+}

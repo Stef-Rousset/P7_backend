@@ -5,6 +5,7 @@ const signalmentController = require('../controllers/comment_signalments')
 
 
 router.post('/posts/:id/comment/:commentId/comment_signalments/new', auth, signalmentController.signalComment)
-router.get('/comment_signalments/index', auth, signalmentController.getAllCommentSignalments )
+router.get('/comment_signalments/index', auth, signalmentController.getAllCommentSignalments)
+router.delete('/comment_signalments/:id', auth, signalmentController.deleteCommentSignalment)
 
 module.exports = router;
