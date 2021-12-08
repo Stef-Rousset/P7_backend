@@ -7,6 +7,7 @@ const commentSignalmentRoutes = require('./routes/comment_signalments');
 const path = require('path');
 const rateLimit = require("express-rate-limit");
 const helmet = require('helmet');
+var xss = require('xss-clean');
 
 // CORS
 app.use((req, res, next) => {
@@ -23,6 +24,8 @@ const limiter = rateLimit({
 app.use(limiter);
 // protect http headers
 app.use(helmet());
+// sanitize inputs
+app.use(xss());
 //middleware global pour parser le corps json des requetes en objets JS
 app.use(express.json());
 //images
