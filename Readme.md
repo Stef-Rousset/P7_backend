@@ -4,12 +4,16 @@ This is the code for Project 7 of the Junior Web Developer path.
 The purpose is to build an intern social network for Groupomania employees.
 The user will be able to:
 - see all posts,
-- add one post, modify it or delete it,
-- like others posts,
+- see his own posts,
+- add one post,
+- like or dislike others posts,
 - add comments to a post,
 - signaled unappropriate posts or comments,
 - see and update his account.
 
+The admin will be able to perform specific actons:
+- see all signaled posts and comments,
+- delete a signaled post or a signaled comment.
 
 ### Installation ###
 
@@ -36,3 +40,5 @@ You will also need to set a secret key (=a long random string) to be used by jso
 
 As the content of the images folder is not sent to github, you will have to add a
 folder called `images` in this project to store the photos of the users.
+You will also have to add in the `images` folder a default image for users who doesn't load a
+specific image: this image's name must be defaultAvatar.jpg

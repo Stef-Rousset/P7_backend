@@ -19,6 +19,15 @@ exports.getOnePost = async(req, res) => {
       return res.status(500).json({ error: error.message })
   }
 }
+exports.getAllPostsOfOneUSer = async(req,res) => {
+  try {
+      const user = await models.User.findOne({ where: { id: req.params.userId}})
+      const posts = await models.Post.findAll({ where: { userId: user.id}})
+      return res.status(200).json({ posts: posts })
+  } catch(error){
+      return res.status(500).json({ error: error.message })
+  }
+}
 exports.createPost = async(req, res) => {
   try {
       const post = await models.Post.create({
@@ -72,20 +81,24 @@ exports.likePost = async(req, res) => {
   try{
       const post = await models.Post.findOne({ where: { id: req.params.id} })
       const like = await models.Like.findOne({ where: { postId: req.params.id, userId: req.body.userId }})
-      // si l'instance de like n'existe pas , on la crée
-      if (!like){
+      const writerOfThePost = await models.User.findOne({ where: { id: post.userId}})
+      // si l'instance de like n'existe pas et que le current user n'est pas celui qui a écrit le post, on la crée
+      if (!like && writerOfThePost.id !== req.body.userId){
           const newLike = await models.Like.create({
                                                     status: req.body.status,
                                                     postId: post.id,
                                                     userId: req.body.userId
                                                   })
           return res.status(201).json({ message: `${newLike.status} added to post: ${post.title} ` })
-      // si l'instance de like existe, on l'update
-      } else {
+      // si le current user n'est pas celui qui a écrit le post et que l'instance de like existe, on l'update
+      } else if (like && writerOfThePost.id !== req.body.userId) {
           await like.update({
                             status: req.body.status
                             })
           return res.status(200).json({ message: `Like status modified on post: ${post.title} ` })
+      // si le current user est celui qui a écrit le post
+      } else {
+          return res.status(401).json({ message: 'You cannot like or dislike your own post'})
       }
   } catch (error){
         return res.status(500).json({ error: error.message})
