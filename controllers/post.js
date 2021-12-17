@@ -5,7 +5,13 @@ const getUserIdFromToken = require('../helpers/getUserIdFromToken');
 //POSTS
 exports.getAllPosts = async(req, res) => {
   try {
-      const posts = await models.Post.findAll()
+      const posts = await models.Post.findAll({
+        include: [{
+          model: models.User,
+          attributes: ["firstName", "lastName", "imageUrl"]
+        }]
+      });
+
       return res.status(200).json(posts)
   } catch(error){
       return res.status(500).json({ error: error.message })
