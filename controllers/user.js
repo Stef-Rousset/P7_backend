@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const models = require('../models');
+const getUserIdFromToken = require('../helpers/getUserIdFromToken');
 require('dotenv').config();
 const fs = require('fs');
 const passwordValidator = require('password-validator');
@@ -59,20 +60,22 @@ exports.login = async (req, res) => {
 };
 exports.getProfile = async (req, res) => {
   try {
-      const user = await models.User.findOne({ where: { id : req.params.id } })
+      const userId = getUserIdFromToken(req.headers.authorization.split(' ')[1])
+      const user = await models.User.findOne({ where: { id : userId } })
       return res.status(200).json({ user: user})
   } catch(error){
       return res.status(400).json({error: error.message})
   }
 }
 exports.updateProfile = async (req, res) => {
+  const userId = getUserIdFromToken(req.headers.authorization.split(' ')[1])
   const userObject = req.body.user
   //si maj du password, il faut hacher le nouveau password
   if (userObject.password){
           const hash = await bcrypt.hash(userObject.password, 10) //hashage du password
           userObject.password = hash
   }
-  const user = await models.User.findOne({ where: { id : req.params.id } })
+  const user = await models.User.findOne({ where: { id : userId } })
   const oldImgFileName = user.imageUrl.split('/images/')[1]
 
   try {
@@ -103,7 +106,8 @@ exports.updateProfile = async (req, res) => {
   }
 }
 exports.deleteProfile = async (req, res) => {
-    const user = await models.User.findOne({ where: { id : req.params.id } })
+    const userId = getUserIdFromToken(req.headers.authorization.split(' ')[1])
+    const user = await models.User.findOne({ where: { id : userId } })
     const { firstName, lastName } = user
     const oldImgFileName = user.imageUrl.split('/images/')[1]
     try {

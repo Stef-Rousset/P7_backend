@@ -5,7 +5,7 @@ const postController = require('../controllers/post')
 
 router.post('/new', auth, postController.createPost)
 router.get('/index', auth, postController.getAllPosts)
-router.get('/myposts/:userId', auth, postController.getAllPostsOfOneUSer)
+router.get('/my_posts', auth, postController.getAllPostsOfOneUSer)
 router.get('/show/:id', auth, postController.getOnePost)
 router.get('/latest', auth, postController.getLatestPosts)
 router.put('/edit/:id', auth, postController.updatePost)

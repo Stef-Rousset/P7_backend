@@ -27,7 +27,8 @@ exports.getOnePost = async(req, res) => {
 }
 exports.getAllPostsOfOneUSer = async(req,res) => {
   try {
-      const user = await models.User.findOne({ where: { id: req.params.userId}})
+      const userId = await getUserIdFromToken(req.headers.authorization.split(' ')[1]) //recup du token ds les headers
+      const user = await models.User.findOne({ where: { id: userId}})
       const posts = await models.Post.findAll({ where: { userId: user.id}})
       return res.status(200).json({ posts: posts })
   } catch(error){
