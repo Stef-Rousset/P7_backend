@@ -5,7 +5,7 @@ const getUserIdFromToken = require('../helpers/getUserIdFromToken');
 exports.signalPost = async(req,res) => {
   try{
       const userId = await getUserIdFromToken(req.headers.authorization.split(' ')[1])
-      const post = await models.Post.findOne({ where: { id: req.params.id}})
+      const post = await models.Post.findOne({ where: { id: req.body.id}})
       await models.PostSignalment.create({
                                           userId: userId,
                                           postId: post.id

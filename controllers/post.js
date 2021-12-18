@@ -86,19 +86,20 @@ exports.getLatestPosts = async (req, res) => {
 //LIKES
 exports.likePost = async(req, res) => {
   try{
-      const post = await models.Post.findOne({ where: { id: req.params.id} })
-      const like = await models.Like.findOne({ where: { postId: req.params.id, userId: req.body.userId }})
+      const userId = await getUserIdFromToken(req.headers.authorization.split(' ')[1])
+      const post = await models.Post.findOne({ where: { id: req.body.postId } })
+      const like = await models.Like.findOne({ where: { postId: post.id, userId: userId }})
       const writerOfThePost = await models.User.findOne({ where: { id: post.userId}})
       // si l'instance de like n'existe pas et que le current user n'est pas celui qui a écrit le post, on la crée
-      if (!like && writerOfThePost.id !== req.body.userId){
+      if (!like && writerOfThePost.id !== userId){
           const newLike = await models.Like.create({
                                                     status: req.body.status,
                                                     postId: post.id,
-                                                    userId: req.body.userId
+                                                    userId: userId
                                                   })
           return res.status(201).json({ message: `${newLike.status} added to post: ${post.title} ` })
       // si le current user n'est pas celui qui a écrit le post et que l'instance de like existe, on l'update
-      } else if (like && writerOfThePost.id !== req.body.userId) {
+      } else if (like && writerOfThePost.id !== userId) {
           await like.update({
                             status: req.body.status
                             })
