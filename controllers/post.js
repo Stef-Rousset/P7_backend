@@ -19,7 +19,12 @@ exports.getAllPosts = async(req, res) => {
 }
 exports.getOnePost = async(req, res) => {
   try {
-      const post = await models.Post.findOne( { where: { id: req.params.id}})
+      const post = await models.Post.findOne( {where: { id: req.params.id },
+        include: [{
+          model: models.User,
+          attributes: ["firstName", "lastName", "imageUrl"]
+        }]
+      });
       return res.status(200).json( { post: post })
   } catch(error){
       return res.status(500).json({ error: error.message })
