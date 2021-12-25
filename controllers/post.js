@@ -9,9 +9,9 @@ exports.getAllPosts = async(req, res) => {
         include: [{
           model: models.User,
           attributes: ["firstName", "lastName", "imageUrl"]
-        }]
+        }],
+        order: [['createdAt', 'DESC']]
       });
-
       return res.status(200).json(posts)
   } catch(error){
       return res.status(500).json({ error: error.message })
@@ -23,6 +23,9 @@ exports.getOnePost = async(req, res) => {
         include: [{
           model: models.User,
           attributes: ["firstName", "lastName", "imageUrl"]
+        },
+        { model: models.Like,
+          attributes: ["status"]
         }]
       });
       return res.status(200).json( { post: post })
