@@ -13,6 +13,7 @@ router.delete('/delete/:id', auth, postController.deletePost)
 router.post('/like', auth, postController.likePost)
 router.get('/:id/likes', auth, postController.getTotalLikes)
 router.get('/:id/dislikes', auth, postController.getTotalDislikes)
+router.get('/:id/comments', auth, postController.getAllComments)
 router.post('/:id/comment', auth, postController.createComment)
 router.delete('/:id/comment/:commentId', auth, postController.deleteComment)
 

@@ -25,7 +25,13 @@ exports.getOnePost = async(req, res) => {
           attributes: ["firstName", "lastName", "imageUrl"]
         },
         { model: models.Like,
-          attributes: ["status"]
+          attributes: ["status"],
+        },
+        { model: models.Comment,
+          include: [{
+                    model: models.User,
+                    attributes: ["firstName", "lastName"]
+                    }]
         }]
       });
       return res.status(200).json( { post: post })
@@ -148,6 +154,21 @@ exports.createComment = async(req, res) => {
                                               postId: post.id
                                             })
       return res.status(200).json( { comment: comment, message: `Comment added to post: ${post.title}` })
+  } catch(error){
+      return res.status(500).json({ error: error.message })
+  }
+}
+exports.getAllComments = async(req, res) => {
+  try {
+      const post = await models.Post.findOne({ where: { id: req.params.id}})
+      const comments = await models.Comment.findAll( { where: { postId: post.id},
+        include: [{
+          model: models.User,
+          attributes: ["firstName", "lastName"]
+        }],
+        order: [['createdAt', 'DESC']]
+      });
+      return res.status(200).json(comments)
   } catch(error){
       return res.status(500).json({ error: error.message })
   }
