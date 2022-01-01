@@ -62,7 +62,7 @@ exports.getProfile = async (req, res) => {
   try {
       const userId = getUserIdFromToken(req.headers.authorization.split(' ')[1])
       const user = await models.User.findOne({ where: { id : userId } })
-      return res.status(200).json({ user: user})
+      return res.status(200).send({ user: user}) // send pour éviter l'erreur CORS policy: Response to preflight request does not have status ok
   } catch(error){
       return res.status(400).json({error: error.message})
   }

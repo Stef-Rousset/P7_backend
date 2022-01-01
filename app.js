@@ -11,9 +11,10 @@ var xss = require('xss-clean');
 
 // CORS
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*'); // autorise l'accès à l'API depuis n'importe quelle origine
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000'); // autorise l'accès à l'API depuis localhost 3000
   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization'); // autorise les headers indiqués
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS'); //autorise les verbes indiqués
+  res.setHeader('Access-Control-Max-Age', 86400) // how long the response to the preflight request can be cached without sending another preflight request.
   next();
 });
 // protection againt force attack
