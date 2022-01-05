@@ -39,16 +39,16 @@ exports.getOnePost = async(req, res) => {
       return res.status(500).json({ error: error.message })
   }
 }
-exports.getAllPostsOfOneUSer = async(req,res) => {
-  try {
-      const userId = await getUserIdFromToken(req.headers.authorization.split(' ')[1]) //recup du token ds les headers
-      const user = await models.User.findOne({ where: { id: userId}})
-      const posts = await models.Post.findAll({ where: { userId: user.id}})
-      return res.status(200).json({ posts: posts })
-  } catch(error){
-      return res.status(500).json({ error: error.message })
-  }
-}
+// exports.getAllPostsOfOneUSer = async(req,res) => {
+//   try {
+//       const userId = await getUserIdFromToken(req.headers.authorization.split(' ')[1]) //recup du token ds les headers
+//       const user = await models.User.findOne({ where: { id: userId}})
+//       const posts = await models.Post.findAll({ where: { userId: user.id}})
+//       return res.status(200).json({ posts: posts })
+//   } catch(error){
+//       return res.status(500).json({ error: error.message })
+//   }
+// }
 exports.createPost = async(req, res) => {
   try {
       const post = await models.Post.create({
@@ -61,19 +61,19 @@ exports.createPost = async(req, res) => {
       return res.status(500).json({ error: error.message })
   }
 }
-exports.updatePost = async(req, res) => {
-  try {
-      const post = await models.Post.findOne({ where: { id: req.params.id}})
-      post.update({
-                    title: req.body.title,
-                    content: req.body.content,
-                    userId: req.body.userId
-                  })
-      return res.status(200).json( { post: post, message: `${post.title} updated` })
-  } catch(error){
-      return res.status(500).json({ error: error.message })
-  }
-}
+// exports.updatePost = async(req, res) => {
+//   try {
+//       const post = await models.Post.findOne({ where: { id: req.params.id}})
+//       post.update({
+//                     title: req.body.title,
+//                     content: req.body.content,
+//                     userId: req.body.userId
+//                   })
+//       return res.status(200).json( { post: post, message: `${post.title} updated` })
+//   } catch(error){
+//       return res.status(500).json({ error: error.message })
+//   }
+// }
 exports.deletePost = async(req, res) => {
   try {
       const userId = await getUserIdFromToken(req.headers.authorization.split(' ')[1]) //recup du token ds les headers
@@ -89,14 +89,14 @@ exports.deletePost = async(req, res) => {
       return res.status(500).json({ error: error.message })
   }
 }
-exports.getLatestPosts = async (req, res) => {
-  try {
-    const latestPosts = await models.Post.findAll({ order: [ [ "createdAt", "DESC" ] ]})
-      return res.status(200).json(latestPosts)
-  } catch (error) {
-      return res.status(500).json({ error: error.message })
-  }
-}
+// exports.getLatestPosts = async (req, res) => {
+//   try {
+//     const latestPosts = await models.Post.findAll({ order: [ [ "createdAt", "DESC" ] ]})
+//       return res.status(200).json(latestPosts)
+//   } catch (error) {
+//       return res.status(500).json({ error: error.message })
+//   }
+// }
 //LIKES
 exports.likePost = async(req, res) => {
   try{
