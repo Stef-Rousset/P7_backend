@@ -11,20 +11,28 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate({ User, Like, Comment, PostSignalment }) {
       // define association here
-      this.belongsTo(User, { foreignKey: 'userId' })
-      this.hasMany(Like, { foreignKey: 'postId', onDelete: 'CASCADE' })
-      this.hasMany(Comment, { foreignKey: 'postId', onDelete: 'CASCADE' })
-      this.hasMany(PostSignalment, { foreignKey: 'postId', onDelete: 'CASCADE'})
+      this.belongsTo(User, { foreignKey: 'userId', onDelete: 'CASCADE' })
+      this.hasMany(Like, { foreignKey: 'postId' })
+      this.hasMany(Comment, { foreignKey: 'postId' })
+      this.hasMany(PostSignalment, { foreignKey: 'postId'})
     }
   };
   Post.init({
     title: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        notNull: true,
+        notEmpty: true,
+      },
     },
     content: {
       type: DataTypes.TEXT,
       allowNull: false,
+      validate: {
+        notNull: true,
+        notEmpty: true,
+      },
     }
     }, {
     sequelize,

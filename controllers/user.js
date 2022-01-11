@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const models = require('../models');
+const getUserIdFromToken = require('../helpers/getUserIdFromToken');
 require('dotenv').config();
 const fs = require('fs');
 const passwordValidator = require('password-validator');
@@ -59,28 +60,38 @@ exports.login = async (req, res) => {
 };
 exports.getProfile = async (req, res) => {
   try {
-      const user = await models.User.findOne({ where: { id : req.params.id } })
-      return res.status(200).json({ user: user})
+      const userId = getUserIdFromToken(req.headers.authorization.split(' ')[1])
+      const user = await models.User.findOne({ where: { id : userId } })
+      return res.status(200).send({ user: user}) // send pour éviter l'erreur CORS policy: Response to preflight request does not have status ok
   } catch(error){
       return res.status(400).json({error: error.message})
   }
 }
 exports.updateProfile = async (req, res) => {
-  const userObject = req.body.user
-  //si maj du password, il faut hacher le nouveau password
-  if (userObject.password){
-          const hash = await bcrypt.hash(userObject.password, 10) //hashage du password
-          userObject.password = hash
-  }
-  const user = await models.User.findOne({ where: { id : req.params.id } })
+  const userId = getUserIdFromToken(req.headers.authorization.split(' ')[1])
+  const user = await models.User.findOne({ where: { id : userId } })
   const oldImgFileName = user.imageUrl.split('/images/')[1]
 
   try {
+      if (req.body.firstName !== null ) {
+          await user.update({ firstName: req.body.firstName })
+      }
+      if (req.body.lastName !== null) {
+          await user.update({ lastName: req.body.lastName })
+      }
+      if (req.body.email !== null) {
+          await user.update({ email: req.body.email })
+      }
+      //si maj du password, il faut hacher le nouveau password
+      if (req.body.password !== undefined) {
+          const hash = await bcrypt.hash(req.body.password, 10) //hashage du password
+          await user.update({ password: hash })
+      }
       // si l'img du user av update est l'img par défaut
       // on met à jour le user avec le new file et on ne supprime pas l'img par défaut
       if (req.file && oldImgFileName === 'defaultAvatar.jpg'){
           await user.update({
-                              ...userObject,
+                              // ...userObject,
                               imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
                             })
       // si l'img du user av update n'est pas l'img par défaut
@@ -88,14 +99,10 @@ exports.updateProfile = async (req, res) => {
       } else if (req.file && oldImgFileName !== 'defaultAvatar.jpg'){
           fs.unlink(`images/${oldImgFileName}`, async () => {
               await user.update({
-                                  ...userObject,
+                                  // ...userObject,
                                   imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
                                 })
           })
-      } else {
-          await user.update({
-                              ...userObject
-                            })
       }
       return res.status(200).json({user: user, message: `${user.firstName} ${user.lastName} updated`})
   } catch(error){
@@ -103,7 +110,8 @@ exports.updateProfile = async (req, res) => {
   }
 }
 exports.deleteProfile = async (req, res) => {
-    const user = await models.User.findOne({ where: { id : req.params.id } })
+    const userId = getUserIdFromToken(req.headers.authorization.split(' ')[1])
+    const user = await models.User.findOne({ where: { id : userId } })
     const { firstName, lastName } = user
     const oldImgFileName = user.imageUrl.split('/images/')[1]
     try {

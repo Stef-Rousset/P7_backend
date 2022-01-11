@@ -5,7 +5,7 @@ const getUserIdFromToken = require('../helpers/getUserIdFromToken');
 exports.signalComment = async(req,res) => {
   try{
       const userId = await getUserIdFromToken(req.headers.authorization.split(' ')[1])
-      const comment = await models.Comment.findOne({ where: { id: req.params.commentId}})
+      const comment = await models.Comment.findOne({ where: { id: req.body.id}})
       const commentWrittenBy = await models.User.findOne({ where: { id: comment.userId}})
       await models.CommentSignalment.create({
                                           userId: userId,

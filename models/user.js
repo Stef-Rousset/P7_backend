@@ -13,26 +13,39 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate({ Post, Like, Comment, PostSignalment, CommentSignalment }) {
       // define association here
-      this.hasMany(Post, { foreignKey: 'userId', onDelete: 'CASCADE' })
-      this.hasMany(Like, { foreignKey: 'userId', onDelete: 'CASCADE' })
-      this.hasMany(Comment, { foreignKey: 'userId', onDelete: 'CASCADE' })
-      this.hasMany(PostSignalment, { foreignKey: 'userId', onDelete: 'CASCADE'})
-      this.hasMany(CommentSignalment, { foreignKey: 'userId', onDelete: 'CASCADE'})
+      this.hasMany(Post, { foreignKey: 'userId' })
+      this.hasMany(Like, { foreignKey: 'userId' })
+      this.hasMany(Comment, { foreignKey: 'userId'})
+      this.hasMany(PostSignalment, { foreignKey: 'userId'})
+      this.hasMany(CommentSignalment, { foreignKey: 'userId'})
     }
   };
   User.init({
     firstName: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        notNull: true,
+        notEmpty: true,
+      },
     },
     lastName: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        notNull: true,
+        notEmpty: true,
+      },
     },
     email: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
+      validate: {
+        notNull: true,
+        notEmpty: true,
+        isEmail: true,
+      },
     },
     password: {
       type: DataTypes.STRING,
