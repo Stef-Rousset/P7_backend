@@ -15,7 +15,7 @@ router.get('/:id/likes', auth, postController.getTotalLikes)
 router.get('/:id/dislikes', auth, postController.getTotalDislikes)
 router.get('/:id/comments', auth, postController.getAllComments)
 router.post('/:id/comment', auth, postController.createComment)
-router.delete('/:id/comment/:commentId', auth, postController.deleteComment)
+router.delete('/comment/:commentId', auth, postController.deleteComment)
 
 
 module.exports = router;

@@ -79,7 +79,7 @@ exports.deletePost = async(req, res) => {
       const userId = await getUserIdFromToken(req.headers.authorization.split(' ')[1]) //recup du token ds les headers
       const user = await models.User.findOne({ where: { id: userId }})
       const post = await models.Post.findOne({ where: { id: req.params.id}})
-      if (user.id === post.userId){
+      if (user.id === post.userId || user.role === 'admin'){
           post.destroy()
           return res.status(200).json( { message: `${post.title} deleted` })
       } else {
