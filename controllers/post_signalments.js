@@ -21,7 +21,15 @@ exports.getAllPostSignalments = async(req,res) => {
       const userId = await getUserIdFromToken(req.headers.authorization.split(' ')[1])
       const currentUser = await models.User.findOne({ where: { id: userId}})
       if (currentUser.role === 'admin'){
-          const postSignalments = await models.PostSignalment.findAll()
+          const postSignalments = await models.PostSignalment.findAll({
+            include: [
+            { model: models.User,
+              attributes: ["firstName", "lastName"]
+            },
+            { model: models.Post,
+              attributes: ["content"]
+            }]
+          })
           return res.status(200).json({ postSignalments: postSignalments})
       } else {
           return res.status(401).json({ message: "You are not allowed to perform this action" })
@@ -33,11 +41,13 @@ exports.getAllPostSignalments = async(req,res) => {
 exports.deletePostSignalment = async(req,res) => {
   try{
       const postSignalment = await models.PostSignalment.findOne({ where: { id: req.params.id }})
+      // on récupère l'id du post pour supprimer tous les signalements de ce post
+      const postId = postSignalment.postId
       const userId = await getUserIdFromToken(req.headers.authorization.split(' ')[1])
       const currentUser = await models.User.findOne({ where: { id: userId}})
       if (currentUser.role === 'admin'){
-          postSignalment.destroy()
-          return res.status(200).json({ message: "Post signalment deleted"})
+          models.PostSignalment.destroy({ where: { postId: postId}})
+          return res.status(200).json({ message: "Post signalments deleted"})
       } else {
           return res.status(401).json({ message: "You are not allowed to perform this action" })
       }

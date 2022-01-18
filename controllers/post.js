@@ -79,7 +79,7 @@ exports.deletePost = async(req, res) => {
       const userId = await getUserIdFromToken(req.headers.authorization.split(' ')[1]) //recup du token ds les headers
       const user = await models.User.findOne({ where: { id: userId }})
       const post = await models.Post.findOne({ where: { id: req.params.id}})
-      if (user.id === post.userId){
+      if (user.id === post.userId || user.role === 'admin'){
           post.destroy()
           return res.status(200).json( { message: `${post.title} deleted` })
       } else {
@@ -126,24 +126,24 @@ exports.likePost = async(req, res) => {
         return res.status(500).json({ error: error.message})
   }
 }
-exports.getTotalLikes = async(req,res) => {
-    try {
-        const post = await models.Post.findOne({ where: { id: req.params.id} })
-        const totalLikes = await models.Like.count({ where: { postId: post.id, status: 'like' } })
-        return res.status(200).json({totalLikes: totalLikes})
-    } catch (error){
-        return res.status(500).json({ error: error.message})
-  }
-}
-exports.getTotalDislikes = async(req,res) => {
-    try{
-        const post = await models.Post.findOne({ where: { id: req.params.id} })
-        const totalDislikes = await models.Like.count({ where: { postId: post.id, status: 'dislike' } })
-        return res.status(200).json({ totalDislikes: totalDislikes })
-    } catch (error){
-        return res.status(500).json({ error: error.message})
-  }
-}
+// exports.getTotalLikes = async(req,res) => {
+//     try {
+//         const post = await models.Post.findOne({ where: { id: req.params.id} })
+//         const totalLikes = await models.Like.count({ where: { postId: post.id, status: 'like' } })
+//         return res.status(200).json({totalLikes: totalLikes})
+//     } catch (error){
+//         return res.status(500).json({ error: error.message})
+//   }
+// }
+// exports.getTotalDislikes = async(req,res) => {
+//     try{
+//         const post = await models.Post.findOne({ where: { id: req.params.id} })
+//         const totalDislikes = await models.Like.count({ where: { postId: post.id, status: 'dislike' } })
+//         return res.status(200).json({ totalDislikes: totalDislikes })
+//     } catch (error){
+//         return res.status(500).json({ error: error.message})
+//   }
+// }
 //COMMENTS
 exports.createComment = async(req, res) => {
   try {

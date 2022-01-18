@@ -26,7 +26,7 @@ exports.signup = async(req, res) => {
                                               password: hash,
                                               imageUrl: `${req.protocol}://${req.get('host')}/images/defaultAvatar.jpg`
                                             })
-            const token = "Bearer " + jwt.sign( { userId: user.id }, process.env.TOKENSECRET, { expiresIn: '24h' } )
+            const token = jwt.sign( { userId: user.id }, process.env.TOKENSECRET, { expiresIn: '24h' } )
             return res.status(201).json({user: user, token: token, message: `${user.firstName} ${user.lastName} created` })
         } else {
             res.status(400).json({ error: 'Invalid password'});
@@ -91,7 +91,6 @@ exports.updateProfile = async (req, res) => {
       // on met à jour le user avec le new file et on ne supprime pas l'img par défaut
       if (req.file && oldImgFileName === 'defaultAvatar.jpg'){
           await user.update({
-                              // ...userObject,
                               imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
                             })
       // si l'img du user av update n'est pas l'img par défaut
@@ -99,7 +98,6 @@ exports.updateProfile = async (req, res) => {
       } else if (req.file && oldImgFileName !== 'defaultAvatar.jpg'){
           fs.unlink(`images/${oldImgFileName}`, async () => {
               await user.update({
-                                  // ...userObject,
                                   imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
                                 })
           })
