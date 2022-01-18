@@ -27,7 +27,7 @@ exports.getAllPostSignalments = async(req,res) => {
               attributes: ["firstName", "lastName"]
             },
             { model: models.Post,
-              attributes: ["content", "title"]
+              attributes: ["content"]
             }]
           })
           return res.status(200).json({ postSignalments: postSignalments})
