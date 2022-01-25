@@ -36,15 +36,15 @@ From within the project folder, you will have to run
 `npm install --save mysql2`
 `npm install -g sequelize-cli`
 
-Next, you will have to create databases with sequelize-cli from the backend folder:
-sequelize-cli db:create
-sequelize-cli db:migrate
-
 Then, you will have to set the environment variables for mysql in a .env file with
 your own identifiers:
 - DBPASSWORD=<your password>
 - DBUSERNAME=<your username>
 - DBNAME=<the name of your db>
+
+Next, you will have to create database with sequelize-cli from the backend folder:
+sequelize-cli db:create
+sequelize-cli db:migrate
 
 You will also need to set a secret key (= a long random string) in the .env file
 to be used by jsonwebtoken
@@ -54,3 +54,9 @@ As the content of the images folder is not sent to github, you will have to add 
 folder called `images` in this project to store the photos of the users.
 You will also have to add in the `images` folder a default image for users who
 doesn't load a specific image: this image's name must be defaultAvatar.jpg
+
+To create an admin profile:
+- create a normal user in the app
+- in your database, execute the following command :
+update users set role = 'admin' where id=id_of_user_you_want_to_set_admin;
+
